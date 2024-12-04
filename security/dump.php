@@ -12,6 +12,7 @@ include('../config.php'); // Include database connection
 // Default query to fetch all vehicle logs
 $query = "SELECT * FROM vehicle_logs ORDER BY date_time DESC";
 
+
 // Search functionality
 if (isset($_POST['search'])) {
     $search_term = mysqli_real_escape_string($conn, $_POST['search_term']);
@@ -29,7 +30,6 @@ if (!$result_vehicles) {
 if (mysqli_num_rows($result_vehicles) == 0) {
     echo "No approved vehicles found";
 }
-
 // Handle vehicle entry submission
 if (isset($_POST['add_vehicle'])) {
     // Get form data
@@ -49,8 +49,6 @@ if (isset($_POST['add_vehicle'])) {
     }
 }
 
-// Fetch vehicle logs
-$result_logs = mysqli_query($conn, $query);
 ?>
 
 <!DOCTYPE html>
@@ -104,11 +102,11 @@ $result_logs = mysqli_query($conn, $query);
         .container {
             display: flex;
             justify-content: space-between;
-            width: 85%;
+            width: 80%;
             margin: 20px auto;
             padding: 20px;
             background-color: white;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
 
@@ -123,7 +121,7 @@ $result_logs = mysqli_query($conn, $query);
 
         .search-bar input[type="text"] {
             padding: 8px;
-            width: 60%;
+            width: 50%;
             border-radius: 5px;
             border: 1px solid #ccc;
         }
@@ -141,26 +139,21 @@ $result_logs = mysqli_query($conn, $query);
             background-color: #00bcd4;
         }
 
-        .vehicle-table, .log-table {
+        .log-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .vehicle-table th, .log-table th, .vehicle-table td, .log-table td {
-            padding: 12px;
+        .log-table th, .log-table td {
+            padding: 10px;
             text-align: center;
             border: 1px solid #ddd;
         }
 
-        .vehicle-table th, .log-table th {
+        .log-table th {
             background-color: #f4f4f4;
             color: #333;
-        }
-
-        .vehicle-table tbody tr:hover, .log-table tbody tr:hover {
-            background-color: #f1f1f1;
         }
 
         .form-container input[type="text"], .form-container select {
@@ -202,14 +195,6 @@ $result_logs = mysqli_query($conn, $query);
 
         .logout-btn:hover {
             background-color: #c2185b;
-        }
-        .responsive-input {
-            width: 100%;     
-            max-width: 400px;     
-            padding: 8px;     
-            border-radius: 5px;   
-            border: 1px solid #ccc;
-            box-sizing: border-box; 
         }
     </style>
 </head>
@@ -267,55 +252,29 @@ $result_logs = mysqli_query($conn, $query);
             <div class="form-container">
                 <h2>Add Vehicle Entry</h2>
                 <form method="POST" action="security_dashboard.php">
-                    
-                <input type="text" name="plate_number" placeholder="Enter Plate Number" required class="responsive-input">
-
+                    <select name="plate_number">
+                        <option value="">Select Vehicle Number</option>
+                        <?php
+                        if (mysqli_num_rows($result_vehicles) > 0) {
+                            while ($vehicle = mysqli_fetch_assoc($result_vehicles)) {
+                                echo "<option value='" . $vehicle['plate_number'] . "'>" . $vehicle['plate_number'] . "</option>";
+                            }
+                        } else {
+                            echo "<option value=''>No approved vehicles found</option>";
+                        }
+                        ?>
+                    </select>
 
                     <select name="entry_exit" required>
                         <option value="entry">Entry</option>
                         <option value="exit">Exit</option>
                     </select>
 
-                    <select name="gate_number" required>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>                    
+                    <input type="text" name="gate_number" placeholder="Gate Number" required>
                     <button type="submit" name="add_vehicle">Add Vehicle</button>
                 </form>
             </div>
         </div>
-    </div>
-
-    <div class="vehicle-logs">
-        <h2>Vehicle Logs</h2>
-        <table class="log-table">
-            <thead>
-                <tr>
-                    <th>Plate Number</th>
-                    <th>Entry/Exit</th>
-                    <th>Gate Number</th>
-                    <th>Date and Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                if (mysqli_num_rows($result_logs) > 0) {
-                    while ($log = mysqli_fetch_assoc($result_logs)) {
-                        echo "<tr>";
-                        echo "<td>" . $log['plate_number'] . "</td>";
-                        echo "<td>" . $log['entry_exit'] . "</td>";
-                        echo "<td>" . $log['gate_number'] . "</td>";
-                        echo "<td>" . $log['date_time'] . "</td>";
-                        echo "</tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='4'>No logs available.</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
     </div>
 
 </body>
