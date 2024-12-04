@@ -1,15 +1,15 @@
 <?php
 session_start();
-// Check if user is logged in and has admin role
+include('../config.php'); // Include database connection
+
+// Ensure only admin can access this page
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     header('Location: login.php');
     exit;
 }
 
-include('../config.php'); // Include database connection
-
-// Fetch users
-$sql = "SELECT * FROM users";
+// Fetch vehicles with "pending" status
+$sql = "SELECT * FROM vehicles WHERE status = 'pending'";
 $result = mysqli_query($conn, $sql);
 ?>
 
@@ -18,7 +18,7 @@ $result = mysqli_query($conn, $sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Users</title>
+    <title>Manage Vehicles</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -76,56 +76,53 @@ $result = mysqli_query($conn, $sql);
             margin-top: 20px;
         }
 
-        table th, table td {
-            padding: 10px;
+        th, td {
+            padding: 12px;
             text-align: left;
             border: 1px solid #ddd;
         }
 
-        table th {
+        th {
             background-color: #333;
             color: white;
         }
 
-        table td a {
-            text-decoration: none;
-            padding: 5px 10px;
-            background-color: #4CAF50;
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn {
+            background-color: #4caf50;
             color: white;
+            padding: 8px 16px;
             border-radius: 5px;
+            text-decoration: none;
             margin-right: 10px;
         }
 
-        table td a:hover {
-            background-color: #45a049;
+        .btn-approve {
+            background-color: #4caf50;
         }
 
-        .add-btn {
-            background-color: #00bcd4;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-
-        .add-btn:hover {
-            background-color: #0097a7;
-        }
-
-        .back-btn {
+        .btn-deny {
             background-color: #f44336;
+        }
+
+        .btn-back {
+            background-color: #2196F3;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 5px;
             text-decoration: none;
             margin-top: 20px;
-            display: inline-block;
         }
 
-        .back-btn:hover {
-            background-color: #d32f2f;
+        .btn:hover {
+            opacity: 0.8;
         }
 
         footer {
@@ -135,37 +132,40 @@ $result = mysqli_query($conn, $sql);
             background-color: #333;
             color: white;
         }
+
     </style>
 </head>
 <body>
 
-    <h1>Manage Users</h1>
-    
+    <h1>Manage Vehicle Registrations</h1>
+
     <div class="container">
         <!-- Back Button -->
-        <a href="admin_dashboard.php" class="back-btn">Back</a>
-        
-        <a href="add_user.php" class="add-btn">Add New User</a>
-        
+        <a href="admin_dashboard.php" class="btn btn-back">Back to Dashboard</a>
+
+        <!-- Vehicle Management Table -->
         <table>
             <tr>
-                <th>Username</th>
-                <th>Role</th>
+                <th>Plate Number</th>
+                <th>Vehicle Type</th>
+                <th>Owner Name</th>
+                <th>Owner Contact</th>
                 <th>Actions</th>
             </tr>
-            <?php while ($user = mysqli_fetch_assoc($result)) { ?>
+            <?php while ($vehicle = mysqli_fetch_assoc($result)) { ?>
                 <tr>
-                    <td><?php echo $user['username']; ?></td>
-                    <td><?php echo ucfirst($user['role']); ?></td>
+                    <td><?php echo $vehicle['plate_number']; ?></td>
+                    <td><?php echo $vehicle['vehicle_type']; ?></td>
+                    <td><?php echo $vehicle['owner_name']; ?></td>
+                    <td><?php echo $vehicle['owner_contact']; ?></td>
                     <td>
-                        <a href="edit_user.php?id=<?php echo $user['id']; ?>">Edit</a>
-                        <a href="delete_user.php?id=<?php echo $user['id']; ?>" onclick="return confirm('Are you sure?')">Delete</a>
+                        <a href="approve_vehicle.php?id=<?php echo $vehicle['id']; ?>&action=approve" class="btn btn-approve">Approve</a>
+                        <a href="approve_vehicle.php?id=<?php echo $vehicle['id']; ?>&action=deny" class="btn btn-deny">Deny</a>
                     </td>
                 </tr>
             <?php } ?>
         </table>
     </div>
-
 
 </body>
 </html>

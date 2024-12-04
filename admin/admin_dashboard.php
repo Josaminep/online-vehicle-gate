@@ -5,6 +5,13 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     header('Location: login.php');
     exit;
 }
+
+include('../config.php'); // Include database connection
+
+// Fetch vehicles with "pending" status
+$sql = "SELECT * FROM vehicles WHERE status = 'pending'";
+$result = mysqli_query($conn, $sql);
+$pending_count = mysqli_num_rows($result); // Count the number of pending vehicles
 ?>
 
 <!DOCTYPE html>
@@ -83,6 +90,15 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
             font-size: 16px;
         }
 
+        .reminder {
+            background-color: #ffeb3b;
+            color: #333;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
         footer {
             text-align: center;
             margin-top: 40px;
@@ -103,6 +119,12 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
             background-color: #c2185b;
         }
 
+        .notification {
+            color: red;
+            font-weight: bold;
+            font-size: 18px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -113,34 +135,16 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
         <ul>
             <li><a href="manage_users.php">Manage Users</a></li>
             <li><a href="view_reports.php">View Reports</a></li>
-            <li><a href="manage_vehicles.php">Manage Vehicles</a></li>
+            <li>
+                <a href="manage_vehicles.php">Manage Vehicles</a>
+                <?php if ($pending_count > 0): ?>
+                    <span class="notification">1</span> <!-- Notification Badge -->
+                <?php endif; ?>
+            </li>
             <li><a href="manage_gates.php">Manage Gates</a></li>
             <li><a href="../logout.php" class="logout-btn">Logout</a></li>
         </ul>
     </nav>
-
-    <!---<div class="container">
-        <div class="card">
-            <h3>Manage Users</h3>
-            <p>View, edit, and delete user accounts.</p>
-            <a href="manage_users.php" class="logout-btn">Go to Manage Users</a>
-        </div>
-        <div class="card">
-            <h3>View Reports</h3>
-            <p>Generate and view reports for vehicle movements.</p>
-            <a href="view_reports.php" class="logout-btn">Go to Reports</a>
-        </div>
-        <div class="card">
-            <h3>Manage Vehicles</h3>
-            <p>Add, update, or delete vehicle data.</p>
-            <a href="manage_vehicles.php" class="logout-btn">Go to Vehicle Management</a>
-        </div>
-        <div class="card">
-            <h3>Manage Gates</h3>
-            <p>Configure and manage gate access points.</p>
-            <a href="manage_gates.php" class="logout-btn">Go to Gate Management</a>
-        </div>
-    </div>--->
 
 </body>
 </html>

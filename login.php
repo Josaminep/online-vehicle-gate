@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } elseif ($user['role'] == 'security') {
                 header('Location: security_dashboard.php');
             } elseif ($user['role'] == 'owner') {
-                header('Location: owner_dashboard.php');
+                header('Location: owner/owner_dashboard.php');
             }
             exit;
         } else {
