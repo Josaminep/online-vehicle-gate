@@ -1,6 +1,7 @@
 <?php
 session_start();
 include('../config.php'); // Include database connection
+include('../phpqrcode/qrlib.php'); // Include the QR code library
 
 // Ensure only registered vehicle owners can access this page
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'owner') {
@@ -20,12 +21,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             VALUES ('$plate_number', '$vehicle_type', '$owner_name', '$owner_contact', 'pending', NULL)";
 
     if (mysqli_query($conn, $sql)) {
-        echo "<div class='success'>Vehicle registered successfully! Please wait for approval.</div>";
+        // Get the last inserted vehicle ID
+        $vehicle_id = mysqli_insert_id($conn);
+
+        // Generate QR code for the vehicle
+        $qrCodeContent = "vehicle_id=$vehicle_id"; // You can also include other details like plate number if needed
+        $qrFilename = "qrcodes/vehicle_" . $vehicle_id . ".png";
+        
+        // Generate and save the QR code image
+        QRcode::png($qrCodeContent, $qrFilename, 'L', 4, 4);
+
+        echo "<div class='success'>Vehicle registered successfully! Please wait for approval. <br> QR Code generated: <img src='$qrFilename' alt='QR Code'></div>";
     } else {
         echo "<div class='error'>Error: " . mysqli_error($conn) . "</div>";
     }
 }
 ?>
+
+<!-- HTML Form remains the same -->
+
 
 <!DOCTYPE html>
 <html lang="en">

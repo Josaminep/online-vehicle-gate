@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($user['role'] == 'admin') {
                 header('Location: admin/admin_dashboard.php');
             } elseif ($user['role'] == 'security') {
-                header('Location: security_dashboard.php');
+                header('Location: security/security_dashboard.php');
             } elseif ($user['role'] == 'owner') {
                 header('Location: owner/owner_dashboard.php');
             }

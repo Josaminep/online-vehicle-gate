@@ -6,6 +6,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'owner') {
     header('Location: login.php');
     exit;
 }
+
+// Fetch owner ID from the session
+$owner_id = $_SESSION['id']; // Assuming the user ID is stored in the session during login
 ?>
 
 <!DOCTYPE html>
@@ -67,13 +70,16 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'owner') {
 
     <div class="container">
         <h1>Welcome, Owner</h1>
+        
+        <!-- Display the Owner's ID -->
+        <p><strong>Your Owner ID: </strong><?= htmlspecialchars($owner_id) ?></p>
 
         <!-- Button Container -->
         <div class="button-container">
             <a href="register_vehicle.php" class="button">Register Vehicle</a>
+            <a href="entry_exit_history.php" class="button">View Entry/Exit History</a>
         </div>
     </div>
-
 
 </body>
 </html>
