@@ -1,54 +1,48 @@
 <?php
 session_start();
+include('../config.php'); // Include the database connection
 
-// Check if the user is logged in and has a 'security' role
-if (!isset($_SESSION['role']) || $_SESSION['role'] != 'security') {
+// Ensure only admin can access this page
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     header('Location: login.php');
     exit;
 }
 
-include('../config.php'); // Include database connection
+// Fetch vehicle logs for graph
+$sql_logs = "SELECT plate_number, entry_exit, date_time, gate_number FROM vehicle_logs";
+$logs_result = mysqli_query($conn, $sql_logs);
 
-// Default query to fetch all vehicle logs
-$query = "SELECT * FROM vehicle_logs ORDER BY date_time DESC";
+// Process report generation
+$report_type = isset($_POST['report_type']) ? $_POST['report_type'] : '';
 
+if ($report_type) {
+    $date_condition = "";
+    $title = "";
 
-// Search functionality
-if (isset($_POST['search'])) {
-    $search_term = mysqli_real_escape_string($conn, $_POST['search_term']);
-    $query = "SELECT * FROM vehicle_logs WHERE vehicle_number LIKE '%$search_term%' ORDER BY date_time DESC";
-}
+    switch ($report_type) {
+        case 'daily':
+            $date_condition = "DATE(date_time) = CURDATE()";
+            $title = "Daily Vehicle Log Report";
+            break;
+        case 'weekly':
+            $date_condition = "WEEK(date_time) = WEEK(CURDATE())";
+            $title = "Weekly Vehicle Log Report";
+            break;
+        case 'monthly':
+            $date_condition = "MONTH(date_time) = MONTH(CURDATE())";
+            $title = "Monthly Vehicle Log Report";
+            break;
+        default:
+            $date_condition = "";
+            break;
+    }
 
-// Query to fetch vehicles with "approved" status
-$query_vehicles = "SELECT * FROM vehicles WHERE status = 'approved' ORDER BY plate_number ASC";
-$result_vehicles = mysqli_query($conn, $query_vehicles);
-
-if (!$result_vehicles) {
-    die("Query failed: " . mysqli_error($conn));
-}
-
-if (mysqli_num_rows($result_vehicles) == 0) {
-    echo "No approved vehicles found";
-}
-// Handle vehicle entry submission
-if (isset($_POST['add_vehicle'])) {
-    // Get form data
-    $vehicle_number = mysqli_real_escape_string($conn, $_POST['plate_number']);
-    $entry_exit = mysqli_real_escape_string($conn, $_POST['entry_exit']);
-    $gate_number = mysqli_real_escape_string($conn, $_POST['gate_number']);
-    $date_time = date('Y-m-d H:i:s'); // Use current date and time
-
-    // Insert new vehicle entry into the vehicle_logs table
-    $insert_query = "INSERT INTO vehicle_logs (plate_number, entry_exit, gate_number, date_time) 
-                     VALUES ('$vehicle_number', '$entry_exit', '$gate_number', '$date_time')";
-
-    if (mysqli_query($conn, $insert_query)) {
-        echo "<script>alert('Vehicle entry added successfully');</script>";
-    } else {
-        echo "<script>alert('Error adding vehicle entry: " . mysqli_error($conn) . "');</script>";
+    // Fetch vehicle logs based on selected report period
+    if ($date_condition) {
+        $report_sql = "SELECT * FROM vehicle_logs WHERE $date_condition";
+        $report_result = mysqli_query($conn, $report_sql);
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -56,226 +50,176 @@ if (isset($_POST['add_vehicle'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Dashboard</title>
+    <title>View Reports</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f7fa;
+            background-color: #FAF6E3;
             margin: 0;
             padding: 0;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #2A3663;
             margin-top: 20px;
         }
 
-        nav {
-            background-color: #333;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-
-        nav ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav ul li {
-            display: inline;
-            margin: 0 15px;
-        }
-
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        nav ul li a:hover {
-            color: #00bcd4;
-        }
-
         .container {
-            display: flex;
-            justify-content: space-between;
             width: 80%;
             margin: 20px auto;
             padding: 20px;
-            background-color: white;
+            background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
 
-        .left-column, .right-column {
-            width: 48%;
-        }
-
-        .search-bar {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .search-bar input[type="text"] {
-            padding: 8px;
-            width: 50%;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .search-bar button {
-            padding: 8px 16px;
-            background-color: #333;
+        .btn {
+            background-color: #2A3663;
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .search-bar button:hover {
-            background-color: #00bcd4;
-        }
-
-        .log-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .log-table th, .log-table td {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-
-        .log-table th {
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        .form-container input[type="text"], .form-container select {
-            padding: 8px;
-            width: 100%;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .form-container button {
             padding: 8px 16px;
-            background-color: #333;
-            color: white;
-            border: none;
             border-radius: 5px;
-            cursor: pointer;
+            text-decoration: none;
+            margin-top: 10px;
         }
 
-        .form-container button:hover {
-            background-color: #00bcd4;
+        .btn:hover {
+            opacity: 0.8;
         }
 
         footer {
             text-align: center;
             margin-top: 40px;
             padding: 10px;
-            background-color: #333;
+            background-color: #2A3663;
             color: white;
         }
 
-        .logout-btn {
-            background-color: #e91e63;
-            color: white;
-            padding: 10px 20px;
+        .report-form select {
+            padding: 8px;
+            margin-right: 10px;
+            background-color: #D8DBBD;
+            border: none;
             border-radius: 5px;
-            text-decoration: none;
         }
 
-        .logout-btn:hover {
-            background-color: #c2185b;
+        .report-form button {
+            background-color: #2A3663;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <h1>Welcome Security Personnel</h1>
-
-    <nav>
-        <ul>
-            <li><a href="security_dashboard.php">Dashboard</a></li>
-            <li><a href="../logout.php" class="logout-btn">Logout</a></li>
-        </ul>
-    </nav>
+    <h1>View Vehicle Logs and Reports</h1>
 
     <div class="container">
-        <div class="left-column">
-            <div class="search-bar">
-                <form method="POST" action="security_dashboard.php">
-                    <input type="text" name="search_term" placeholder="Search by vehicle number..." required>
-                    <button type="submit" name="search">Search</button>
-                </form>
-            </div>
+        <div class="report-form">
+            <form method="POST">
+                <label for="report_type">Generate Report: </label>
+                <select name="report_type" id="report_type" required>
+                    <option value="">Select Report Type</option>
+                    <option value="daily" <?php echo ($report_type == 'daily') ? 'selected' : ''; ?>>Daily</option>
+                    <option value="weekly" <?php echo ($report_type == 'weekly') ? 'selected' : ''; ?>>Weekly</option>
+                    <option value="monthly" <?php echo ($report_type == 'monthly') ? 'selected' : ''; ?>>Monthly</option>
+                </select>
+                <button type="submit" class="btn">Generate Report</button>
+            </form>
+        </div>
 
-            <!-- Vehicle Table -->
-            <table class="vehicle-table">
+        <h2 class="text-2xl font-bold mb-4">Vehicle Log Graph</h2>
+        <canvas id="logChart" width="400" height="200"></canvas>
+
+        <h2 class="text-2xl font-bold mb-4"><?php echo $title ?: 'Vehicle Logs'; ?></h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Plate Number</th>
+                    <th>Entry/Exit</th>
+                    <th>Date and Time</th>
+                    <th>Gate Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($log = mysqli_fetch_assoc($logs_result)) { ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($log['plate_number']); ?></td>
+                        <td><?php echo htmlspecialchars($log['entry_exit']); ?></td>
+                        <td><?php echo htmlspecialchars($log['date_time']); ?></td>
+                        <td><?php echo htmlspecialchars($log['gate_number']); ?></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+
+        <?php if ($report_result && mysqli_num_rows($report_result) > 0) { ?>
+            <h3>Generated Report:</h3>
+            <table>
                 <thead>
                     <tr>
-                        <th>Vehicle Number</th>
-                        <th>Vehicle Type</th>
-                        <th>Owner Name</th>
-                        <th>Status</th>
+                        <th>Plate Number</th>
+                        <th>Entry/Exit</th>
+                        <th>Date and Time</th>
+                        <th>Gate Number</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    if (mysqli_num_rows($result_vehicles) > 0) {
-                        while ($row = mysqli_fetch_assoc($result_vehicles)) {
-                            echo "<tr>";
-                            echo "<td>" . $row['plate_number'] . "</td>";
-                            echo "<td>" . ucfirst($row['vehicle_type']) . "</td>";
-                            echo "<td>" . $row['owner_name'] . "</td>";
-                            echo "<td>" . $row['status'] . "</td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='4'>No records found.</td></tr>";
-                    }
-                    ?>
+                    <?php while ($report = mysqli_fetch_assoc($report_result)) { ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($report['plate_number']); ?></td>
+                            <td><?php echo htmlspecialchars($report['entry_exit']); ?></td>
+                            <td><?php echo htmlspecialchars($report['date_time']); ?></td>
+                            <td><?php echo htmlspecialchars($report['gate_number']); ?></td>
+                        </tr>
+                    <?php } ?>
                 </tbody>
             </table>
-
-        </div>
-
-        <div class="right-column">
-            <div class="form-container">
-                <h2>Add Vehicle Entry</h2>
-                <form method="POST" action="security_dashboard.php">
-                    <select name="plate_number">
-                        <option value="">Select Vehicle Number</option>
-                        <?php
-                        if (mysqli_num_rows($result_vehicles) > 0) {
-                            while ($vehicle = mysqli_fetch_assoc($result_vehicles)) {
-                                echo "<option value='" . $vehicle['plate_number'] . "'>" . $vehicle['plate_number'] . "</option>";
-                            }
-                        } else {
-                            echo "<option value=''>No approved vehicles found</option>";
-                        }
-                        ?>
-                    </select>
-
-                    <select name="entry_exit" required>
-                        <option value="entry">Entry</option>
-                        <option value="exit">Exit</option>
-                    </select>
-
-                    <input type="text" name="gate_number" placeholder="Gate Number" required>
-                    <button type="submit" name="add_vehicle">Add Vehicle</button>
-                </form>
-            </div>
-        </div>
+        <?php } ?>
     </div>
+
+    <footer>
+        <p>&copy; 2024 Your Company Name. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        var ctx = document.getElementById('logChart').getContext('2d');
+        var logChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Gate 1', 'Gate 2', 'Gate 3', 'Gate 4'], // You can customize this to reflect actual data
+                datasets: [{
+                    label: 'Vehicle Logs',
+                    data: [12, 19, 3, 5], // Example data, update with actual data
+                    backgroundColor: [
+                        '#2A3663',
+                        '#D8DBBD',
+                        '#B59F78',
+                        '#FAF6E3'
+                    ],
+                    borderColor: [
+                        '#2A3663',
+                        '#D8DBBD',
+                        '#B59F78',
+                        '#FAF6E3'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 
 </body>
 </html>

@@ -22,19 +22,19 @@ $result = mysqli_query($conn, $sql);
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f7fa;
+            background-color: #FAF6E3; /* Light cream background */
             margin: 0;
             padding: 0;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #2A3663; /* Dark blue for headers */
             margin-top: 20px;
         }
 
         nav {
-            background-color: #333;
+            background-color: #2A3663; /* Dark blue */
             color: white;
             padding: 15px;
             text-align: center;
@@ -58,7 +58,7 @@ $result = mysqli_query($conn, $sql);
         }
 
         nav ul li a:hover {
-            color: #00bcd4;
+            color: #D8DBBD; /* Soft green hover */
         }
 
         .container {
@@ -83,25 +83,25 @@ $result = mysqli_query($conn, $sql);
         }
 
         table th {
-            background-color: #333;
+            background-color: #2A3663; /* Dark blue header */
             color: white;
         }
 
         table td a {
             text-decoration: none;
             padding: 5px 10px;
-            background-color: #4CAF50;
+            background-color: #B59F78; /* Warm beige for action buttons */
             color: white;
             border-radius: 5px;
             margin-right: 10px;
         }
 
         table td a:hover {
-            background-color: #45a049;
+            background-color: #D8DBBD; /* Soft green hover */
         }
 
         .add-btn {
-            background-color: #00bcd4;
+            background-color: #B59F78; /* Warm beige */
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
@@ -111,11 +111,11 @@ $result = mysqli_query($conn, $sql);
         }
 
         .add-btn:hover {
-            background-color: #0097a7;
+            background-color: #D8DBBD; /* Soft green hover */
         }
 
         .back-btn {
-            background-color: #f44336;
+            background-color: #F44336; /* Red for back button */
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
@@ -125,14 +125,14 @@ $result = mysqli_query($conn, $sql);
         }
 
         .back-btn:hover {
-            background-color: #d32f2f;
+            background-color: #D32F2F; /* Darker red on hover */
         }
 
         footer {
             text-align: center;
             margin-top: 40px;
             padding: 10px;
-            background-color: #333;
+            background-color: #2A3663; /* Dark blue footer */
             color: white;
         }
     </style>
@@ -148,24 +148,32 @@ $result = mysqli_query($conn, $sql);
         <a href="add_user.php" class="add-btn">Add New User</a>
         
         <table>
-            <tr>
-                <th>Username</th>
-                <th>Role</th>
-                <th>Actions</th>
-            </tr>
-            <?php while ($user = mysqli_fetch_assoc($result)) { ?>
-                <tr>
-                    <td><?php echo $user['username']; ?></td>
-                    <td><?php echo ucfirst($user['role']); ?></td>
-                    <td>
-                        <a href="edit_user.php?id=<?php echo $user['id']; ?>">Edit</a>
-                        <a href="delete_user.php?id=<?php echo $user['id']; ?>" onclick="return confirm('Are you sure?')">Delete</a>
-                    </td>
-                </tr>
-            <?php } ?>
-        </table>
-    </div>
+    <tr>
+        <th>Full Name</th>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Actions</th>
+    </tr>
+    <?php 
+    // Assuming $result contains the fetched user data
+    while ($user = mysqli_fetch_assoc($result)) { 
+    ?>
+        <tr>
+            <!-- Display Full Name (fname and lname concatenated) -->
+            <td><?php echo $user['fname'] . ' ' . $user['lname']; ?></td>
+            
+            <td><?php echo $user['username']; ?></td>
+            <td><?php echo ucfirst($user['role']); ?></td>
+            <td>
+                <a href="edit_user.php?id=<?php echo $user['id']; ?>">Edit</a>
+                <a href="delete_user.php?id=<?php echo $user['id']; ?>" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+        </tr>
+    <?php } ?>
+</table>
 
+
+    </div>
 
 </body>
 </html>

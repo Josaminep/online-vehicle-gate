@@ -16,6 +16,8 @@ $result = mysqli_query($conn, $sql);
 $user = mysqli_fetch_assoc($result);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $fname = mysqli_real_escape_string($conn, $_POST['fname']);
+    $lname = mysqli_real_escape_string($conn, $_POST['lname']);
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $role = mysqli_real_escape_string($conn, $_POST['role']);
@@ -24,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     // Update user details
-    $sql = "UPDATE users SET username = '$username', password = '$hashed_password', role = '$role' WHERE id = '$id'";
+    $sql = "UPDATE users SET fname = '$fname', lname = '$lname', username = '$username', password = '$hashed_password', role = '$role' WHERE id = '$id'";
     if (mysqli_query($conn, $sql)) {
         header('Location: manage_users.php');
         exit;
@@ -43,98 +45,124 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f7fa;
+            background-color: #FAF6E3; /* Pale yellow */
             margin: 0;
             padding: 0;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #2A3663; /* Deep blue */
             margin-top: 20px;
         }
 
         .container {
-            width: 50%;
+            width: 90%;
+            max-width: 600px; /* Restricting width */
             margin: 40px auto;
-            padding: 20px;
+            padding: 30px;
             background-color: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            background-color: #D8DBBD; /* Light greenish beige */
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1 1 calc(50% - 20px); /* 50% width minus the gap */
         }
 
         label {
-            display: block;
-            font-weight: bold;
+            font-size: 16px;
+            color: #2A3663; /* Deep blue */
             margin-bottom: 8px;
+            display: block;
         }
 
         input[type="text"], input[type="password"], select {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 12px;
+            margin-bottom: 20px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #B59F78; /* Light brown */
             font-size: 14px;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
         }
 
         button {
-            background-color: #4CAF50;
+            background-color: #2A3663; /* Deep blue */
             color: white;
-            padding: 10px 20px;
-            border: none;
+            padding: 12px 20px;
             border-radius: 5px;
-            cursor: pointer;
+            border: none;
             font-size: 16px;
+            cursor: pointer;
             width: 100%;
-            margin-top: 20px;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: #1a234d; /* Darker blue */
         }
 
         .back-btn {
-            background-color: #f44336;
+            background-color: #B59F78; /* Light brown */
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
             text-decoration: none;
-            margin-top: 20px;
+            font-size: 16px;
             display: inline-block;
-            position: absolute;
-            top: 20px;
-            left: 20px;
+            margin-top: 20px;
         }
 
         .back-btn:hover {
-            background-color: #d32f2f;
+            background-color: #9e8d64; /* Darker light brown */
         }
 
         footer {
             text-align: center;
             margin-top: 40px;
             padding: 10px;
-            background-color: #333;
+            background-color: #2A3663; /* Deep blue */
             color: white;
         }
+
     </style>
 </head>
 <body>
 
-    <a href="manage_users.php" class="back-btn">Back to Manage Users</a>
+    <!-- Back Button at the Top -->
+    <div style="text-align: left; margin-bottom: 20px;">
+        <a href="manage_users.php" class="back-btn">Back</a>
+    </div>
 
     <h1>Edit User</h1>
 
     <div class="container">
         <form method="POST" action="edit_user.php?id=<?php echo $user['id']; ?>">
-            <label>Username:</label>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fname">First Name:</label>
+                    <input type="text" name="fname" id="fname" value="<?php echo $user['fname']; ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="lname">Last Name:</label>
+                    <input type="text" name="lname" id="lname" value="<?php echo $user['lname']; ?>" required>
+                </div>
+            </div>
+
+            <label for="username">Username:</label>
             <input type="text" name="username" value="<?php echo $user['username']; ?>" required>
 
-            <label>Password:</label>
+            <label for="password">Password:</label>
             <input type="password" name="password" required>
 
-            <label>Role:</label>
+            <label for="role">Role:</label>
             <select name="role" required>
                 <option value="admin" <?php echo ($user['role'] == 'admin') ? 'selected' : ''; ?>>Admin</option>
                 <option value="security" <?php echo ($user['role'] == 'security') ? 'selected' : ''; ?>>Security</option>

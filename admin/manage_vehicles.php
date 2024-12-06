@@ -21,20 +21,21 @@ $result = mysqli_query($conn, $sql);
     <title>Manage Vehicles</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7fa;
+            font-family: 'Arial', sans-serif;
+            background-color: #FAF6E3; /* Light cream */
             margin: 0;
             padding: 0;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #2A3663; /* Deep blue */
             margin-top: 20px;
+            font-size: 28px;
         }
 
         nav {
-            background-color: #333;
+            background-color: #2A3663; /* Deep blue */
             color: white;
             padding: 15px;
             text-align: center;
@@ -58,16 +59,16 @@ $result = mysqli_query($conn, $sql);
         }
 
         nav ul li a:hover {
-            color: #00bcd4;
+            color: #D8DBBD; /* Soft beige */
         }
 
         .container {
             width: 80%;
-            margin: 20px auto;
+            margin: 30px auto;
             padding: 20px;
             background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
 
         table {
@@ -79,33 +80,30 @@ $result = mysqli_query($conn, $sql);
         th, td {
             padding: 12px;
             text-align: left;
-            border: 1px solid #ddd;
+            border: 1px solid #D8DBBD; /* Soft beige */
         }
 
         th {
-            background-color: #333;
+            background-color: #2A3663; /* Deep blue */
             color: white;
         }
 
         tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
+            background-color: #D8DBBD; /* Soft beige */
         }
 
         .btn {
-            background-color: #4caf50;
-            color: white;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 5px;
             text-decoration: none;
             margin-right: 10px;
+            font-size: 14px;
+            color: white;
+            cursor: pointer;
         }
 
         .btn-approve {
-            background-color: #4caf50;
+            background-color: #B59F78; /* Muted gold */
         }
 
         .btn-deny {
@@ -115,10 +113,11 @@ $result = mysqli_query($conn, $sql);
         .btn-back {
             background-color: #2196F3;
             color: white;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: 5px;
             text-decoration: none;
             margin-top: 20px;
+            display: inline-block;
         }
 
         .btn:hover {
@@ -129,10 +128,9 @@ $result = mysqli_query($conn, $sql);
             text-align: center;
             margin-top: 40px;
             padding: 10px;
-            background-color: #333;
+            background-color: #2A3663; /* Deep blue */
             color: white;
         }
-
     </style>
 </head>
 <body>
@@ -145,25 +143,29 @@ $result = mysqli_query($conn, $sql);
 
         <!-- Vehicle Management Table -->
         <table>
-            <tr>
-                <th>Plate Number</th>
-                <th>Vehicle Type</th>
-                <th>Owner Name</th>
-                <th>Owner Contact</th>
-                <th>Actions</th>
-            </tr>
-            <?php while ($vehicle = mysqli_fetch_assoc($result)) { ?>
+            <thead>
                 <tr>
-                    <td><?php echo $vehicle['plate_number']; ?></td>
-                    <td><?php echo $vehicle['vehicle_type']; ?></td>
-                    <td><?php echo $vehicle['owner_name']; ?></td>
-                    <td><?php echo $vehicle['owner_contact']; ?></td>
-                    <td>
-                        <a href="approve_vehicle.php?id=<?php echo $vehicle['id']; ?>&action=approve" class="btn btn-approve">Approve</a>
-                        <a href="approve_vehicle.php?id=<?php echo $vehicle['id']; ?>&action=deny" class="btn btn-deny">Deny</a>
-                    </td>
+                    <th>Plate Number</th>
+                    <th>Vehicle Type</th>
+                    <th>Owner Name</th>
+                    <th>Owner Contact</th>
+                    <th>Actions</th>
                 </tr>
-            <?php } ?>
+            </thead>
+            <tbody>
+                <?php while ($vehicle = mysqli_fetch_assoc($result)) { ?>
+                    <tr>
+                        <td><?php echo $vehicle['plate_number']; ?></td>
+                        <td><?php echo $vehicle['vehicle_type']; ?></td>
+                        <td><?php echo $vehicle['owner_name']; ?></td>
+                        <td><?php echo $vehicle['owner_contact']; ?></td>
+                        <td>
+                            <a href="approve_vehicle.php?id=<?php echo $vehicle['id']; ?>&action=approve" class="btn btn-approve">Approve</a>
+                            <a href="approve_vehicle.php?id=<?php echo $vehicle['id']; ?>&action=deny" class="btn btn-deny">Deny</a>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </tbody>
         </table>
     </div>
 
