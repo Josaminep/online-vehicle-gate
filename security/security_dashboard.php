@@ -9,6 +9,18 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'security') {
 
 include('../config.php'); // Include database connection
 
+// Fetch gate number for the logged-in user
+$user_id = $_SESSION['id']; // Assuming `user_id` is stored in the session
+$query_gate = "SELECT gate_number FROM users WHERE id = '$user_id'";
+$result_gate = mysqli_query($conn, $query_gate);
+
+if ($result_gate && mysqli_num_rows($result_gate) > 0) {
+    $row_gate = mysqli_fetch_assoc($result_gate);
+    $assigned_gate = $row_gate['gate_number'];
+} else {
+    $assigned_gate = "Not Assigned"; // Default message if no gate number is found
+}
+
 // Default query to fetch all vehicle logs
 $query = "SELECT * FROM vehicle_logs ORDER BY date_time DESC";
 
@@ -48,10 +60,22 @@ if (isset($_POST['add_vehicle'])) {
         echo "<script>alert('Error adding vehicle entry: " . mysqli_error($conn) . "');</script>";
     }
 }
+// Fetch assigned gate number for the logged-in user
+$assigned_gate_number = null;
+$user_id = $_SESSION['id']; // Assuming the user's ID is stored in the session
+
+$query_gate = "SELECT gate_number FROM users WHERE id = '$user_id'";
+$result_gate = mysqli_query($conn, $query_gate);
+
+if ($result_gate && mysqli_num_rows($result_gate) > 0) {
+    $row = mysqli_fetch_assoc($result_gate);
+    $assigned_gate_number = $row['gate_number'];
+}
 
 // Fetch vehicle logs
 $result_logs = mysqli_query($conn, $query);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -62,20 +86,21 @@ $result_logs = mysqli_query($conn, $query);
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f7fa;
+            background-color: #FAF6E3;
             margin: 0;
             padding: 0;
+            color: #2A3663;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #2A3663;
             margin-top: 20px;
         }
 
         nav {
-            background-color: #333;
-            color: white;
+            background-color: #2A3663;
+            color: #FAF6E3;
             padding: 15px;
             text-align: center;
         }
@@ -92,13 +117,13 @@ $result_logs = mysqli_query($conn, $query);
         }
 
         nav ul li a {
-            color: white;
+            color: #FAF6E3;
             text-decoration: none;
             font-weight: bold;
         }
 
         nav ul li a:hover {
-            color: #00bcd4;
+            color: #D8DBBD;
         }
 
         .container {
@@ -107,8 +132,8 @@ $result_logs = mysqli_query($conn, $query);
             width: 85%;
             margin: 20px auto;
             padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            background-color: #D8DBBD;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
 
@@ -122,107 +147,168 @@ $result_logs = mysqli_query($conn, $query);
         }
 
         .search-bar input[type="text"] {
-            padding: 8px;
+            padding: 10px;
             width: 60%;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #B59F78;
         }
 
         .search-bar button {
-            padding: 8px 16px;
-            background-color: #333;
-            color: white;
+            padding: 10px 16px;
+            background-color: #2A3663;
+            color: #FAF6E3;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
 
         .search-bar button:hover {
-            background-color: #00bcd4;
+            background-color: #B59F78;
         }
 
         .vehicle-table, .log-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .vehicle-table th, .log-table th, .vehicle-table td, .log-table td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
+            background-color: #FAF6E3;
+            border: 1px solid #B59F78;
+            border-radius: 5px;
+            overflow: hidden;
         }
 
         .vehicle-table th, .log-table th {
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: #2A3663;
+            color: #FAF6E3;
+            padding: 12px;
+        }
+
+        .vehicle-table td, .log-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #D8DBBD;
         }
 
         .vehicle-table tbody tr:hover, .log-table tbody tr:hover {
-            background-color: #f1f1f1;
+            background-color: #D8DBBD;
+        }
+
+        .form-container {
+            padding: 20px;
+            background-color: #FAF6E3;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #2A3663;
         }
 
         .form-container input[type="text"], .form-container select {
-            padding: 8px;
+            padding: 10px;
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #B59F78;
         }
 
         .form-container button {
-            padding: 8px 16px;
-            background-color: #333;
-            color: white;
+            padding: 10px 16px;
+            background-color: #2A3663;
+            color: #FAF6E3;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
 
         .form-container button:hover {
-            background-color: #00bcd4;
+            background-color: #B59F78;
         }
 
         footer {
             text-align: center;
             margin-top: 40px;
             padding: 10px;
-            background-color: #333;
-            color: white;
+            background-color: #2A3663;
+            color: #FAF6E3;
         }
 
         .logout-btn {
-            background-color: #e91e63;
-            color: white;
+            background-color: #B59F78;
+            color: #FAF6E3;
             padding: 10px 20px;
             border-radius: 5px;
             text-decoration: none;
         }
 
         .logout-btn:hover {
-            background-color: #c2185b;
+            background-color: #2A3663;
         }
-        .responsive-input {
-            width: 100%;     
-            max-width: 400px;     
-            padding: 8px;     
-            border-radius: 5px;   
-            border: 1px solid #ccc;
-            box-sizing: border-box; 
+        nav {
+        background-color: #2A3663; /* Adjust to the palette */
+        color: white;
+        padding: 15px;
+        text-align: right; /* Align menu to the right */
+    }
+
+    nav ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: inline-block; /* Ensure it stays inline */
+    }
+
+    nav ul li {
+        display: inline;
+        margin: 0 15px;
+    }
+
+    nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    nav ul li a:hover {
+        color: #B59F78; /* Hover effect */
+    }
+    .date-time {
+            color: #B59F78; /* Gold text for the current date and time */
+            font-size: 18px;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-weight: bold;
         }
+        .gate-info {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2A3663;
+            margin: 10px 0;
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
+
+<!-- Display current date and time on the right -->
+<div class="date-time">
+    <p id="datetime"></p>
+</div>
 
     <h1>Welcome Security Personnel</h1>
 
     <nav>
         <ul>
-            <li><a href="security_dashboard.php">Dashboard</a></li>
             <li><a href="../logout.php" class="logout-btn">Logout</a></li>
         </ul>
     </nav>
+
+        <!-- Display the assigned gate number -->
+        <div class="gate-info">
+        Assigned Gate: <?= htmlspecialchars($assigned_gate); ?>
+    </div>
 
     <div class="container">
         <div class="left-column">
@@ -260,28 +346,20 @@ $result_logs = mysqli_query($conn, $query);
                     ?>
                 </tbody>
             </table>
-
         </div>
 
         <div class="right-column">
             <div class="form-container">
                 <h2>Add Vehicle Entry</h2>
                 <form method="POST" action="security_dashboard.php">
-                    
-                <input type="text" name="plate_number" placeholder="Enter Plate Number" required class="responsive-input">
-
-
+                    <input type="text" name="plate_number" placeholder="Enter Plate Number" required>
                     <select name="entry_exit" required>
                         <option value="entry">Entry</option>
                         <option value="exit">Exit</option>
                     </select>
+                    <label for="gate_number">Gate Number:</label>
+                    <input type="text" name="gate_number" value="<?php echo htmlspecialchars($assigned_gate_number); ?>" readonly>
 
-                    <select name="gate_number" required>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>                    
                     <button type="submit" name="add_vehicle">Add Vehicle</button>
                 </form>
             </div>
@@ -317,6 +395,26 @@ $result_logs = mysqli_query($conn, $query);
             </tbody>
         </table>
     </div>
+
+    <script>
+    function updateTime() {
+        const now = new Date().toLocaleString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true,
+            timeZone: 'Asia/Manila'  // Set timezone to Philippine Time
+        });
+        document.getElementById('datetime').textContent = now;
+    }
+
+    setInterval(updateTime, 1000); // Update time every second
+    updateTime(); // Call function immediately to display initial time
+</script>
 
 </body>
 </html>
