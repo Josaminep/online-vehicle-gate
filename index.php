@@ -1,90 +1,36 @@
-<?php
-session_start();
-// Ensure the user is not logged in if accessing this page directly
-if (isset($_SESSION['role'])) {
-    header('Location: admin_dashboard.php');
-    exit;
-}
-?>
-
-<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
+    <title>Vehicle Registration System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
+            background-color: #FAF6E3; /* Light Cream */
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f7f7f7;
         }
 
         .container {
-            width: 80%;
-            max-width: 800px;
-            margin: 100px auto;
-            text-align: center;
+            background-color: #D8DBBD; /* Light Green */
+            color: #2A3663; /* Dark Blue */
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
+        button {
+            background-color: #2A3663; /* Dark Blue */
+            color: #FFF;
         }
 
-        .button-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
+        button:hover {
+            background-color: #1d2a47; /* Darker Blue */
         }
-
-        .button {
-            background-color: #4caf50;
-            color: white;
-            padding: 15px 30px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            width: 200px;
-            text-align: center;
-        }
-
-        .button:hover {
-            background-color: #45a049;
-        }
-
-        .button:focus {
-            outline: none;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 10px;
-            background-color: #333;
-            color: white;
-        }
-
     </style>
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen">
 
-    <div class="container">
-        <h1>Welcome to the Vehicle Registration System</h1>
-
-        <!-- Button Container -->
-        <div class="button-container">
-            <a href="login.php" class="button">Login</a>
-            <a href="register_vehicle.php" class="button">Register Vehicle</a>
-        </div>
+    <div class="container text-center p-10 rounded-lg shadow-lg max-w-md mx-auto">
+        <h1 class="text-4xl font-bold mb-6">Welcome to Online Vehicle Gate System</h1>
+        <a href="login.php">
+            <button class="py-2 px-6 rounded-full text-lg hover:bg-green-600 transition duration-300">Login</button>
+        </a>
     </div>
-
-    <footer>
-        <p>&copy; 2024 Vehicle Registration System</p>
-    </footer>
 
 </body>
 </html>
