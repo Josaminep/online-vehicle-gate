@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../config.php'); // Include database connection
+include('config.php'); // Include database connection
 
 // Ensure only registered vehicle owners can access this page
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'owner') {
@@ -23,13 +23,14 @@ if (mysqli_num_rows($result) > 0) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Get input values from form
     $plate_number = mysqli_real_escape_string($conn, $_POST['plate_number']);
     $vehicle_type = mysqli_real_escape_string($conn, $_POST['vehicle_type']);
     $owner_contact = mysqli_real_escape_string($conn, $_POST['owner_contact']);
 
-    // Insert vehicle details into the database
-    $sql = "INSERT INTO vehicles (plate_number, vehicle_type, owner_name, owner_contact, status, approved_by) 
-            VALUES ('$plate_number', '$vehicle_type', '$owner_name', '$owner_contact', 'pending', NULL)";
+    // Insert vehicle details into the database with owner_id
+    $sql = "INSERT INTO vehicles (plate_number, vehicle_type, owner_id, owner_name, owner_contact, status, approved_by) 
+            VALUES ('$plate_number', '$vehicle_type', '$owner_id', '$owner_name', '$owner_contact', 'pending', NULL)";
 
     if (mysqli_query($conn, $sql)) {
         echo "<div class='success'>Vehicle registered successfully! Please wait for approval.</div>";
@@ -38,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -146,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 
 <?php
-include('../config.php'); // Include database connection
+include('config.php'); // Include database connection
 
 // Ensure only registered vehicle owners can access this page
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'owner') {

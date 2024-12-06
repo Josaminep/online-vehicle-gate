@@ -6,14 +6,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     exit;
 }
 
-include('../config.php'); // Include database connection
-
-$id = $_GET['id'];
-
-// Fetch user details
-$sql = "SELECT * FROM users WHERE id = '$id'";
-$result = mysqli_query($conn, $sql);
-$user = mysqli_fetch_assoc($result);
+include('config.php'); // Include database connection
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $fname = mysqli_real_escape_string($conn, $_POST['fname']);
@@ -22,11 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $role = mysqli_real_escape_string($conn, $_POST['role']);
 
-    // Hash password if changed
+    // Hash password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    // Update user details
-    $sql = "UPDATE users SET fname = '$fname', lname = '$lname', username = '$username', password = '$hashed_password', role = '$role' WHERE id = '$id'";
+    // Insert user into database
+    $sql = "INSERT INTO users (fname, lname, username, password, role) 
+            VALUES ('$fname', '$lname', '$username', '$hashed_password', '$role')";
     if (mysqli_query($conn, $sql)) {
         header('Location: manage_users.php');
         exit;
@@ -41,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User</title>
+    <title>Add User</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -67,14 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #D8DBBD; /* Light greenish beige */
         }
 
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .form-row .form-group {
-            flex: 1 1 calc(50% - 20px); /* 50% width minus the gap */
+        .form-group {
+            margin-bottom: 20px;
         }
 
         label {
@@ -84,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             display: block;
         }
 
-        input[type="text"], input[type="password"], select {
+        input, select {
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
@@ -92,6 +80,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border: 1px solid #B59F78; /* Light brown */
             font-size: 14px;
             box-sizing: border-box; /* Ensures padding doesn't affect width */
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1 1 calc(50% - 20px); /* 50% width minus the gap */
         }
 
         button {
@@ -124,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #9e8d64; /* Darker light brown */
         }
 
-        footer {
+        .footer {
             text-align: center;
             margin-top: 40px;
             padding: 10px;
@@ -141,35 +139,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <a href="manage_users.php" class="back-btn">Back</a>
     </div>
 
-    <h1>Edit User</h1>
+    <h1>Add User</h1>
 
     <div class="container">
-        <form method="POST" action="edit_user.php?id=<?php echo $user['id']; ?>">
+        <form method="POST" action="add_user.php">
             <div class="form-row">
                 <div class="form-group">
                     <label for="fname">First Name:</label>
-                    <input type="text" name="fname" id="fname" value="<?php echo $user['fname']; ?>" required>
+                    <input type="text" name="fname" id="fname" required>
                 </div>
                 <div class="form-group">
                     <label for="lname">Last Name:</label>
-                    <input type="text" name="lname" id="lname" value="<?php echo $user['lname']; ?>" required>
+                    <input type="text" name="lname" id="lname" required>
                 </div>
             </div>
-
-            <label for="username">Username:</label>
-            <input type="text" name="username" value="<?php echo $user['username']; ?>" required>
-
-            <label for="password">Password:</label>
-            <input type="password" name="password" required>
-
-            <label for="role">Role:</label>
-            <select name="role" required>
-                <option value="admin" <?php echo ($user['role'] == 'admin') ? 'selected' : ''; ?>>Admin</option>
-                <option value="security" <?php echo ($user['role'] == 'security') ? 'selected' : ''; ?>>Security</option>
-                <option value="owner" <?php echo ($user['role'] == 'owner') ? 'selected' : ''; ?>>Owner</option>
-            </select>
-
-            <button type="submit">Update User</button>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="role">Role:</label>
+                <select name="role" id="role" required>
+                    <option value="admin">Admin</option>
+                    <option value="security">Security</option>
+                    <option value="owner">Owner</option>
+                </select>
+            </div>
+            <button type="submit">Add User</button>
         </form>
     </div>
 

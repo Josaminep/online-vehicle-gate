@@ -11,7 +11,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'owner') {
 $owner_id = $_SESSION['id']; // Assuming the user ID is stored in the session during login
 
 // Connect to the database
-include('../config.php');
+include('config.php');
 
 // Fetch the owner's first name and last name from the database using the owner ID
 $sql = "SELECT fname, lname FROM users WHERE id = '$owner_id'";
@@ -27,7 +27,7 @@ if (mysqli_num_rows($result) > 0) {
 }
 
 // Fetch vehicles registered by the owner
-$vehicle_sql = "SELECT plate_number, vehicle_type, owner_name, owner_contact, registration_date, status FROM vehicles WHERE id = '$owner_id'";
+$vehicle_sql = "SELECT plate_number, vehicle_type, owner_id, owner_name, owner_contact, registration_date, status FROM vehicles WHERE owner_id = '$owner_id'";
 $vehicle_result = mysqli_query($conn, $vehicle_sql);
 
 if (mysqli_num_rows($vehicle_result) > 0) {
@@ -39,10 +39,11 @@ if (mysqli_num_rows($vehicle_result) > 0) {
 // Logout logic
 if (isset($_POST['logout'])) {
     session_destroy(); // Destroy the session
-    header('Location: ../logout.php'); // Redirect to the login page
+    header('Location: logout.php'); // Redirect to the login page
     exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -190,6 +191,7 @@ if (isset($_POST['logout'])) {
     <p style="color: #2A3663; margin-top: 20px;">No vehicles registered.</p>
 <?php endif; ?>
 </div>
+
 
 
     <!-- Button Container -->

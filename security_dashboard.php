@@ -7,75 +7,58 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'security') {
     exit;
 }
 
-include('../config.php'); // Include database connection
+include('config.php'); // Include database connection
 
-// Fetch gate number for the logged-in user
-$user_id = $_SESSION['id']; // Assuming `user_id` is stored in the session
-$query_gate = "SELECT gate_number FROM users WHERE id = '$user_id'";
-$result_gate = mysqli_query($conn, $query_gate);
+// Fetch the assigned gate number for the logged-in user
+$user_id = $_SESSION['id'];
+$query_gate = "SELECT gate_number FROM users WHERE id = ?";
+$stmt_gate = $conn->prepare($query_gate);
+$stmt_gate->bind_param("i", $user_id);
+$stmt_gate->execute();
+$result_gate = $stmt_gate->get_result();
 
-if ($result_gate && mysqli_num_rows($result_gate) > 0) {
-    $row_gate = mysqli_fetch_assoc($result_gate);
-    $assigned_gate = $row_gate['gate_number'];
-} else {
-    $assigned_gate = "Not Assigned"; // Default message if no gate number is found
-}
+$assigned_gate = ($result_gate && $result_gate->num_rows > 0) 
+    ? $result_gate->fetch_assoc()['gate_number'] 
+    : "Not Assigned";
 
 // Default query to fetch all vehicle logs
 $query = "SELECT * FROM vehicle_logs ORDER BY date_time DESC";
 
 // Search functionality
 if (isset($_POST['search'])) {
-    $search_term = mysqli_real_escape_string($conn, $_POST['search_term']);
-    $query = "SELECT * FROM vehicle_logs WHERE vehicle_number LIKE '%$search_term%' ORDER BY date_time DESC";
+    $search_term = trim($_POST['search_term']);
+    $query = "SELECT * FROM vehicle_logs WHERE plate_number LIKE ? ORDER BY date_time DESC";
+    $stmt = $conn->prepare($query);
+    $search_like = "%" . $search_term . "%";
+    $stmt->bind_param("s", $search_like);
+    $stmt->execute();
+    $result_logs = $stmt->get_result();
+} else {
+    $result_logs = $conn->query($query);
 }
 
 // Query to fetch vehicles with "approved" status
 $query_vehicles = "SELECT * FROM vehicles WHERE status = 'approved' ORDER BY plate_number ASC";
-$result_vehicles = mysqli_query($conn, $query_vehicles);
-
-if (!$result_vehicles) {
-    die("Query failed: " . mysqli_error($conn));
-}
-
-if (mysqli_num_rows($result_vehicles) == 0) {
-    echo "No approved vehicles found";
-}
+$result_vehicles = $conn->query($query_vehicles);
 
 // Handle vehicle entry submission
 if (isset($_POST['add_vehicle'])) {
-    // Get form data
-    $vehicle_number = mysqli_real_escape_string($conn, $_POST['plate_number']);
-    $entry_exit = mysqli_real_escape_string($conn, $_POST['entry_exit']);
-    $gate_number = mysqli_real_escape_string($conn, $_POST['gate_number']);
-    $date_time = date('Y-m-d H:i:s'); // Use current date and time
+    $plate_number = trim($_POST['plate_number']);
+    $entry_exit = $_POST['entry_exit'];
+    $gate_number = $assigned_gate; // Use assigned gate number
+    $date_time = date('Y-m-d H:i:s');
 
-    // Insert new vehicle entry into the vehicle_logs table
     $insert_query = "INSERT INTO vehicle_logs (plate_number, entry_exit, gate_number, date_time) 
-                     VALUES ('$vehicle_number', '$entry_exit', '$gate_number', '$date_time')";
-
-    if (mysqli_query($conn, $insert_query)) {
+                     VALUES (?, ?, ?, ?)";
+    $stmt_insert = $conn->prepare($insert_query);
+    $stmt_insert->bind_param("ssss", $plate_number, $entry_exit, $gate_number, $date_time);
+    if ($stmt_insert->execute()) {
         echo "<script>alert('Vehicle entry added successfully');</script>";
     } else {
-        echo "<script>alert('Error adding vehicle entry: " . mysqli_error($conn) . "');</script>";
+        echo "<script>alert('Error adding vehicle entry: " . $conn->error . "');</script>";
     }
 }
-// Fetch assigned gate number for the logged-in user
-$assigned_gate_number = null;
-$user_id = $_SESSION['id']; // Assuming the user's ID is stored in the session
-
-$query_gate = "SELECT gate_number FROM users WHERE id = '$user_id'";
-$result_gate = mysqli_query($conn, $query_gate);
-
-if ($result_gate && mysqli_num_rows($result_gate) > 0) {
-    $row = mysqli_fetch_assoc($result_gate);
-    $assigned_gate_number = $row['gate_number'];
-}
-
-// Fetch vehicle logs
-$result_logs = mysqli_query($conn, $query);
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -301,7 +284,7 @@ $result_logs = mysqli_query($conn, $query);
 
     <nav>
         <ul>
-            <li><a href="../logout.php" class="logout-btn">Logout</a></li>
+            <li><a href="logout.php" class="logout-btn">Logout</a></li>
         </ul>
     </nav>
 

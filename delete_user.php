@@ -6,7 +6,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     exit;
 }
 
-include('../config.php'); // Include database connection
+include('config.php'); // Include database connection
 
 $id = $_GET['id'];
 

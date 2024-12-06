@@ -1,5 +1,5 @@
 <?php
-include('../config.php'); // Include database connection
+include('config.php'); // Include database connection
 
 // Check if vehicle_number is provided
 if (isset($_POST['vehicle_number'])) {

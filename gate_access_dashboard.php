@@ -6,7 +6,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'security') {
     exit;
 }
 
-include('../config.php'); // Include database connection
+include('config.php'); // Include database connection
 
 // Handle vehicle access approval/denial
 if (isset($_GET['action']) && isset($_GET['vehicle_id'])) {

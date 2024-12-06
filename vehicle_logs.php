@@ -6,7 +6,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'security') {
     exit;
 }
 
-include('../config.php'); // Include database connection
+include('config.php'); // Include database connection
 
 // Handle vehicle log entry and exit
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

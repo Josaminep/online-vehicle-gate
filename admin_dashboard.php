@@ -6,7 +6,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
     exit;
 }
 
-include('../config.php'); // Include database connection
+include('config.php'); // Include database connection
 
 // Set timezone to Philippines
 date_default_timezone_set('Asia/Manila');
@@ -75,7 +75,7 @@ $current_datetime = date('l, F j, Y h:i:s', time()); // Time without millisecond
                     </li>
                 </ul>
             </div>
-            <button onclick="window.location.href='../logout.php'" class="bg-[var(--bg-highlight)] text-[var(--text-highlight)] py-2 px-4 rounded hover:bg-opacity-75 flex items-center justify-center">
+            <button onclick="window.location.href='logout.php'" class="bg-[var(--bg-highlight)] text-[var(--text-highlight)] py-2 px-4 rounded hover:bg-opacity-75 flex items-center justify-center">
                 <i class="fas fa-sign-out-alt mr-2"></i> Logout
             </button>
         </div>

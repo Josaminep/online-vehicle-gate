@@ -6,7 +6,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'security') {
     exit;
 }
 
-include('../config.php'); // Include database connection
+include('config.php'); // Include database connection
 
 // Fetch recent vehicle access logs for real-time tracking
 $sql = "SELECT * FROM vehicle_logs ORDER BY date_time DESC LIMIT 10";

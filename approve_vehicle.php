@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../config.php'); // Include database connection
+include('config.php'); // Include database connection
 
 // Ensure only admin can access this page
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {

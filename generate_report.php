@@ -1,6 +1,6 @@
 <?php 
 session_start();
-include('../config.php');
+include('config.php');
 
 // Ensure only admin can access this page
 if (!isset($_SESSION['role']) || $_SESSION['role'] != 'admin') {
