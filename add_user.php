@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         button {
-            background-color: #2A3663; /* Deep blue */
+            background-color: #4B5945; /* Deep blue */
             color: white;
             padding: 12px 20px;
             border-radius: 5px;
@@ -116,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 16px;
             display: inline-block;
             margin-top: 20px;
+            margin-left: 20px;
         }
 
         .back-btn:hover {
@@ -171,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <option value="owner">Owner</option>
                 </select>
             </div>
-            <button type="submit">Add User</button>
+            <button type="submit">Add</button>
         </form>
     </div>
 

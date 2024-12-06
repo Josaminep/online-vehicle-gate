@@ -45,20 +45,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #FAF6E3; /* Pale yellow */
+            background-color: #FAF6E3; /* Light cream */
             margin: 0;
             padding: 0;
+            color: black; /* Black text for readability */
         }
 
         h1 {
             text-align: center;
-            color: #2A3663; /* Deep blue */
+            color: #4B5945; /* Dark olive */
             margin-top: 20px;
         }
 
         .container {
             width: 90%;
-            max-width: 600px; /* Restricting width */
+            max-width: 600px;
             margin: 40px auto;
             padding: 30px;
             background-color: white;
@@ -79,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         label {
             font-size: 16px;
-            color: #2A3663; /* Deep blue */
+            color: #4B5945; /* Dark olive */
             margin-bottom: 8px;
             display: block;
         }
@@ -89,13 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding: 12px;
             margin-bottom: 20px;
             border-radius: 5px;
-            border: 1px solid #B59F78; /* Light brown */
+            border: 1px solid #91AC8F; /* Light olive green */
             font-size: 14px;
-            box-sizing: border-box; /* Ensures padding doesn't affect width */
+            box-sizing: border-box;
         }
 
         button {
-            background-color: #2A3663; /* Deep blue */
+            background-color: #4B5945; /* Dark olive */
             color: white;
             padding: 12px 20px;
             border-radius: 5px;
@@ -106,11 +107,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         button:hover {
-            background-color: #1a234d; /* Darker blue */
+            background-color: #66785F; /* Muted olive-green */
         }
 
         .back-btn {
-            background-color: #B59F78; /* Light brown */
+            background-color: #B2C9AD; /* Light mint green */
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
@@ -118,20 +119,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 16px;
             display: inline-block;
             margin-top: 20px;
+            margin-left: 10px;
         }
 
         .back-btn:hover {
-            background-color: #9e8d64; /* Darker light brown */
+            background-color: #91AC8F; /* Slightly darker mint green */
         }
 
         footer {
             text-align: center;
             margin-top: 40px;
             padding: 10px;
-            background-color: #2A3663; /* Deep blue */
+            background-color: #4B5945; /* Dark olive footer */
             color: white;
         }
-
     </style>
 </head>
 <body>
@@ -141,26 +142,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <a href="manage_users.php" class="back-btn">Back</a>
     </div>
 
-    <h1>Edit User</h1>
+    <h1>Update User Data</h1>
 
     <div class="container">
         <form method="POST" action="edit_user.php?id=<?php echo $user['id']; ?>">
             <div class="form-row">
                 <div class="form-group">
                     <label for="fname">First Name:</label>
-                    <input type="text" name="fname" id="fname" value="<?php echo $user['fname']; ?>" required>
+                    <input type="text" name="fname" id="fname" value="<?php echo $user['fname']; ?>">
                 </div>
                 <div class="form-group">
                     <label for="lname">Last Name:</label>
-                    <input type="text" name="lname" id="lname" value="<?php echo $user['lname']; ?>" required>
+                    <input type="text" name="lname" id="lname" value="<?php echo $user['lname']; ?>" >
                 </div>
             </div>
 
             <label for="username">Username:</label>
-            <input type="text" name="username" value="<?php echo $user['username']; ?>" required>
+            <input type="text" name="username" value="<?php echo $user['username']; ?>" >
 
             <label for="password">Password:</label>
-            <input type="password" name="password" required>
+            <input type="password" name="password">
 
             <label for="role">Role:</label>
             <select name="role" required>
@@ -169,9 +170,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <option value="owner" <?php echo ($user['role'] == 'owner') ? 'selected' : ''; ?>>Owner</option>
             </select>
 
-            <button type="submit">Update User</button>
+            <button type="submit">Update</button>
         </form>
     </div>
 
 </body>
 </html>
+

@@ -19,6 +19,7 @@ $result = mysqli_query($conn, $sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Vehicles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -27,15 +28,15 @@ $result = mysqli_query($conn, $sql);
             padding: 0;
         }
 
-        h1 {
+        h2 {
             text-align: center;
-            color: #2A3663; /* Deep blue */
+            color: #4B5945; /* Dark Olive */
             margin-top: 20px;
             font-size: 28px;
         }
 
         nav {
-            background-color: #2A3663; /* Deep blue */
+            background-color: #4B5945; /* Dark Olive */
             color: white;
             padding: 15px;
             text-align: center;
@@ -59,7 +60,7 @@ $result = mysqli_query($conn, $sql);
         }
 
         nav ul li a:hover {
-            color: #D8DBBD; /* Soft beige */
+            color: #91AC8F; /* Soft Green */
         }
 
         .container {
@@ -84,12 +85,12 @@ $result = mysqli_query($conn, $sql);
         }
 
         th {
-            background-color: #2A3663; /* Deep blue */
+            background-color: #4B5945; /* Dark Olive */
             color: white;
         }
 
         tr:nth-child(even) {
-            background-color: #D8DBBD; /* Soft beige */
+            background-color: #D8DBBD; /* Soft Beige */
         }
 
         .btn {
@@ -100,6 +101,8 @@ $result = mysqli_query($conn, $sql);
             font-size: 14px;
             color: white;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
         }
 
         .btn-approve {
@@ -110,8 +113,12 @@ $result = mysqli_query($conn, $sql);
             background-color: #f44336;
         }
 
+        .btn i {
+            margin-right: 8px;
+        }
+
         .btn-back {
-            background-color: #2196F3;
+            background-color: #91AC8F; /* Soft Green */
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
@@ -128,18 +135,16 @@ $result = mysqli_query($conn, $sql);
             text-align: center;
             margin-top: 40px;
             padding: 10px;
-            background-color: #2A3663; /* Deep blue */
+            background-color: #4B5945; /* Dark Olive */
             color: white;
         }
     </style>
 </head>
 <body>
-
-    <h1>Manage Vehicle Registrations</h1>
-
     <div class="container">
         <!-- Back Button -->
-        <a href="admin_dashboard.php" class="btn btn-back">Back to Dashboard</a>
+        <a href="admin_dashboard.php" class="btn btn-back">Back</a>
+        <h2>Manage Vehicle Registration</h2>
 
         <!-- Vehicle Management Table -->
         <table>
@@ -160,8 +165,12 @@ $result = mysqli_query($conn, $sql);
                         <td><?php echo $vehicle['owner_name']; ?></td>
                         <td><?php echo $vehicle['owner_contact']; ?></td>
                         <td>
-                            <a href="approve_vehicle.php?id=<?php echo $vehicle['id']; ?>&action=approve" class="btn btn-approve">Approve</a>
-                            <a href="approve_vehicle.php?id=<?php echo $vehicle['id']; ?>&action=deny" class="btn btn-deny">Deny</a>
+                            <a href="approve_vehicle.php?id=<?php echo $vehicle['id']; ?>&action=approve" class="btn btn-approve">
+                                <i class="fas fa-check-circle"></i> Approve
+                            </a>
+                            <a href="approve_vehicle.php?id=<?php echo $vehicle['id']; ?>&action=deny" class="btn btn-deny">
+                                <i class="fas fa-times-circle"></i> Deny
+                            </a>
                         </td>
                     </tr>
                 <?php } ?>

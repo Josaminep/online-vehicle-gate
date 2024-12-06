@@ -59,14 +59,15 @@ while ($log = mysqli_fetch_assoc($vehicle_logs_result)) {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #FAF6E3;
+            background-color: #FAF6E3; /* Light cream */
             margin: 0;
             padding: 0;
+            color: #4B5945; /* Dark Olive for text */
         }
 
         h1 {
             text-align: center;
-            color: #2A3663;
+            color: #4B5945; /* Dark Olive */
             margin-top: 20px;
         }
 
@@ -80,7 +81,7 @@ while ($log = mysqli_fetch_assoc($vehicle_logs_result)) {
         }
 
         .btn {
-            background-color: #2A3663;
+            background-color: #4B5945; /* Dark Olive */
             color: white;
             padding: 8px 16px;
             border-radius: 5px;
@@ -96,28 +97,31 @@ while ($log = mysqli_fetch_assoc($vehicle_logs_result)) {
             text-align: center;
             margin-top: 40px;
             padding: 10px;
-            background-color: #2A3663;
+            background-color: #4B5945; /* Dark Olive */
             color: white;
         }
 
         .report-form select {
             padding: 8px;
             margin-right: 10px;
-            background-color: #D8DBBD;
+            background-color: #D8DBBD; /* Soft Beige */
             border: none;
             border-radius: 5px;
+            font-size: 16px;
+            color: #4B5945; /* Dark Olive */
         }
 
         .report-form button {
-            background-color: #2A3663;
+            background-color: #4B5945; /* Dark Olive */
             color: white;
             padding: 8px 16px;
             border-radius: 5px;
             border: none;
             cursor: pointer;
         }
+
         .back-btn {
-            background-color: #F44336; /* Red for back button */
+            background-color: #4B5945;
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
@@ -130,10 +134,19 @@ while ($log = mysqli_fetch_assoc($vehicle_logs_result)) {
         .back-btn:hover {
             background-color: #D32F2F; /* Darker red on hover */
         }
+
+        h2 {
+            color: #4B5945; /* Dark Olive */
+        }
+
+        canvas {
+            background-color: #B2C9AD; /* Soft Green background for chart */
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
-<a href="admin_dashboard.php" class="back-btn">Back</a>
+    <a href="admin_dashboard.php" class="back-btn">Back</a>
 
     <h1>View Vehicle Logs and Reports</h1>
 
@@ -152,9 +165,8 @@ while ($log = mysqli_fetch_assoc($vehicle_logs_result)) {
             </form>
         </div>
 
-        <h2 class="text-2xl font-bold mb-4">Vehicle Log Graph</h2>
+        <h2></h2>
         <canvas id="logChart" width="400" height="200"></canvas>
-
 
     </div>
 
@@ -173,32 +185,32 @@ while ($log = mysqli_fetch_assoc($vehicle_logs_result)) {
                 datasets: [{
                     label: 'Entries vs Exits',
                     data: [entryExitCounts['Entry'], entryExitCounts['Exit']], // Data for Entry and Exit
-                    backgroundColor: ['#4CAF50', '#F44336'], // Colors for Entry and Exit
-                    borderColor: ['#388E3C', '#D32F2F'],
+                    backgroundColor: ['#4CAF50', '#4CAF50'], // Colors for Entry and Exit
+                    borderColor: ['#4CAF50', '#4CAF50'],
                     borderWidth: 1
                 }, {
                     label: 'Gate 1',
                     data: [gateCounts[1]],
-                    backgroundColor: '#FAF6E3',
-                    borderColor: '#FAF6E3',
+                    backgroundColor: '#D8DBBD', // Soft Beige
+                    borderColor: '#D8DBBD',
                     borderWidth: 1
                 }, {
                     label: 'Gate 2',
                     data: [gateCounts[2]],
-                    backgroundColor: '#D8DBBD',
-                    borderColor: '#D8DBBD',
+                    backgroundColor: '#91AC8F', // Soft Green
+                    borderColor: '#91AC8F',
                     borderWidth: 1
                 }, {
                     label: 'Gate 3',
                     data: [gateCounts[3]],
-                    backgroundColor: '#B59F78',
-                    borderColor: '#B59F78',
+                    backgroundColor: '#B2C9AD', // Light Green
+                    borderColor: '#B2C9AD',
                     borderWidth: 1
                 }, {
                     label: 'Gate 4',
                     data: [gateCounts[4]],
-                    backgroundColor: '#2A3663',
-                    borderColor: '#2A3663',
+                    backgroundColor: '#4B5945', // Dark Olive
+                    borderColor: '#4B5945',
                     borderWidth: 1
                 }]
             },

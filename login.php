@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #FAF6E3; /* Light Cream */
+            background-color: #FAF6E3; /* Dark Olive Green */
             margin: 0;
             padding: 0;
         }
@@ -60,40 +60,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             width: 300px;
             margin: 100px auto;
             padding: 20px;
-            background-color: #D8DBBD; /* Light Green */
+            background-color: #66785F; /* Muted Olive Green */
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
             text-align: center;
-            color: #2A3663; /* Dark Blue */
+            color: #FFFFFF; /* White Text */
         }
 
         input {
-            width: 100%; /* Ensure input fields don't overflow */
+            width: 100%;
             padding: 10px;
             margin: 10px 0;
-            border: 1px solid #B59F78; /* Light Brown */
+            border: 1px solid #91AC8F; /* Soft Green */
             border-radius: 5px;
-            background-color: #FFF;
-            box-sizing: border-box; /* Include padding in width calculation */
+            background-color: #B2C9AD; /* Light Sage */
+            color: #FFFFFF; /* White Text */
+            box-sizing: border-box;
         }
 
         button {
             width: 100%;
             padding: 10px;
-            background-color: #2A3663; /* Dark Blue */
-            color: #FFF;
+            background-color: #4B5945; /* Dark Olive Green */
+            color: #FFFFFF; /* White Text */
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
-            box-sizing: border-box; /* Include padding in width calculation */
+            box-sizing: border-box;
         }
 
         button:hover {
-            background-color: #1d2a47; /* Darker Blue */
+            background-color: #3E4B38; /* Darker Olive Green */
         }
 
         .signup-link {
@@ -102,14 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         .signup-link a {
-            color: #2A3663; /* Dark Blue */
+            color: #D8DBBD; /* Soft Green */
             text-decoration: none;
         }
 
         footer {
             text-align: center;
             margin-top: 20px;
-            color: #2A3663;
+            color: #FFFFFF; /* White Text */
         }
     </style>
 </head>
@@ -127,10 +128,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
         </div>
     </div>
-
-    <footer>
-        <p>&copy; 2024 Online Vehicle Gate System. All Rights Reserved.</p>
-    </footer>
 
 </body>
 </html>
