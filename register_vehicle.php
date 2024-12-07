@@ -40,8 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,97 +49,108 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #FAF6E3; /* Light cream background */
+            background-color: #B2C9AD; /* Light greenish background */
             margin: 0;
             padding: 0;
+            color: #000; /* Default text color: black */
         }
 
         .container {
-            width: 80%;
-            max-width: 600px;
+            width: 90%;
+            max-width: 700px;
             margin: 50px auto;
-            padding: 20px;
-            background-color: #FFFFFF; /* White background for form */
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            background-color: #FFFFFF; /* White background for the form */
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
         h1 {
             text-align: center;
-            color: #2A3663; /* Deep blue color */
-            margin-bottom: 20px;
+            color: #4B5945; /* Deep olive green */
+            margin-bottom: 30px;
+            font-size: 24px;
         }
 
         label {
-            font-size: 16px;
-            margin-bottom: 5px;
-            display: block;
-            color: #2A3663; /* Deep blue for label */
+            font-size: 14px;
+            color: #4B5945; /* Deep olive green for labels */
+            margin-bottom: 3px; /* Reduced space between label and input */
+            font-weight: bold;
         }
 
         input {
-            width: calc(100% - 24px); /* Ensures input doesn't overflow container */
-            padding: 12px;
-            margin: 10px 0 20px;
-            border: 1px solid #D8DBBD; /* Light greenish border */
-            border-radius: 5px;
-            font-size: 16px;
-            background-color: #FAF6E3; /* Light cream for input */
+            width: 100%; /* Ensure inputs fill their grid space */
+            padding: 10px; /* Slightly reduced padding */
+            border: 1px solid #91AC8F; /* Medium green for border */
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #F5F5F5; /* Light gray for input background */
+            color: #000; /* Black text */
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two columns */
+            gap: 15px; /* Reduced space between fields */
+        }
+
+
+        input:focus {
+            border-color: #66785F; /* Darker green on focus */
+            outline: none;
+            box-shadow: 0 0 6px #91AC8F; /* Subtle green glow */
         }
 
         input[readonly] {
-            background-color: #D8DBBD; /* Light greenish for readonly input */
+            background-color: #E9ECEA; 
+            color: #66785F;
         }
 
         button {
-            width: 100%;
+            grid-column: 1 / 1; 
             padding: 12px;
-            background-color: #2A3663; /* Deep blue background */
-            color: white;
-            font-size: 18px;
+            background-color: #4B5945; 
+            color: #FFFFFF; 
+            font-size: 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            width: 80pt;
         }
 
         button:hover {
-            background-color: #B59F78; /* Light brown on hover */
+            background-color: #66785F; /* Lighter green on hover */
         }
 
-        .success {
-            color: #4CAF50; /* Green for success messages */
-            font-size: 16px;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .error {
-            color: #E74C3C; /* Red for error messages */
-            font-size: 16px;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 10px;
-            background-color: #2A3663; /* Deep blue for footer */
-            color: white;
-        }
         .back-btn {
-            background-color: #F44336; /* Red for back button */
+            background-color: #91AC8F; /* Medium green */
             color: white;
             padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 8px;
             text-decoration: none;
-            margin-top: 20px;
-            margin-left: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 20px;
             display: inline-block;
+            margin-top: 30px;
+            margin-left: 50px;
         }
 
         .back-btn:hover {
-            background-color: #D32F2F; /* Darker red on hover */
+            background-color: #66785F; /* Darker green on hover */
+        }
+
+        @media (max-width: 600px) {
+            form {
+                grid-template-columns: 1fr; /* Single column for smaller screens */
+            }
+
+            button {
+                grid-column: span 1;
+            }
         }
     </style>
 </head>
@@ -176,19 +185,18 @@ if (mysqli_num_rows($result) > 0) {
     <h1>Register Vehicle</h1>
     <form method="POST" action="register_vehicle.php">
         <label for="plate_number">Plate Number:</label>
-        <input type="text" id="plate_number" name="plate_number" required><br>
+        <input type="text" id="plate_number" name="plate_number" required>
 
         <label for="vehicle_type">Vehicle Type:</label>
-        <input type="text" id="vehicle_type" name="vehicle_type" required><br>
+        <input type="text" id="vehicle_type" name="vehicle_type" required>
 
-        <!-- Display owner name in a readonly input field -->
         <label for="owner_name">Owner Name:</label>
-        <input type="text" id="owner_name" name="owner_name" value="<?php echo $owner_name; ?>" readonly><br>
+        <input type="text" id="owner_name" name="owner_name" value="<?php echo $owner_name; ?>" readonly>
 
-        <label for="owner_contact">Owner Contact:</label>
-        <input type="text" id="owner_contact" name="owner_contact" required><br>
+        <label for="owner_contact">Contact Number:</label>
+        <input type="text" id="owner_contact" name="owner_contact" required>
 
-        <button type="submit">Register Vehicle</button>
+        <button type="submit">Register</button>
     </form>
 </div>
 

@@ -56,39 +56,57 @@ if (isset($_POST['logout'])) {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #FAF6E3; /* Light Cream background */
+            background-color: #B2C9AD; /* Light green background */
+            color: #4B5945; /* Text color */
         }
 
         .container {
             width: 80%;
-            max-width: 800px;
-            margin: 100px auto;
+            max-width: 900px;
+            margin: 80px auto;
             text-align: center;
-            background-color: #D8DBBD; /* Light Green background */
+            background-color: #91AC8F; /* Background for the container */
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
         }
 
         h1 {
-            color: #2A3663; /* Dark Blue text */
+            color: #4B5945; /* Main text color */
+            font-size: 32px;
             margin-bottom: 20px;
         }
 
         p {
-            color: #2A3663; /* Dark Blue text for content */
-            font-size: 18px;
+            font-size: 20px;
+            color: #4B5945; /* Main text color */
         }
 
         .vehicle-list {
             margin-top: 30px;
             text-align: left;
-            padding-left: 20px;
+        }
+
+        .vehicle-list table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white; /* Table background */
         }
 
         .vehicle-list th, .vehicle-list td {
-            padding: 10px;
-            border-bottom: 1px solid #2A3663;
+            padding: 12px;
+            border: 1px solid #66785F;
+            text-align: left;
+            font-size: 18px;
+        }
+
+        .vehicle-list th {
+            background-color: #66785F; /* Header background */
+            color: white; /* Header text */
+        }
+
+        .vehicle-list tr:nth-child(even) {
+            background-color: #F5F5F5; /* Alternate row color */
         }
 
         .button-container {
@@ -99,42 +117,34 @@ if (isset($_POST['logout'])) {
         }
 
         .button {
-            background-color: #2A3663; /* Dark Blue button */
+            background-color: #4B5945; /* Dark button */
             color: white;
             padding: 15px 30px;
             font-size: 18px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             text-decoration: none;
             width: 200px;
             text-align: center;
+            transition: background-color 0.3s ease;
         }
 
         .button:hover {
-            background-color: #1d2a47; /* Darker Blue on hover */
-        }
-
-        .button:focus {
-            outline: none;
+            background-color: #66785F; /* Hover color */
         }
 
         .logout-button {
-            background-color: #B59F78; /* Gold button */
+            background-color: #91AC8F;
             color: white;
         }
 
         .logout-button:hover {
-            background-color: #a17e55; /* Darker Gold on hover */
-        }
-
-        .footer {
-            margin-top: 50px;
-            color: #B59F78; /* Gold text for footer */
+            background-color: #66785F;
         }
 
         .date-time {
-            color: #B59F78; /* Gold text for the current date and time */
+            color: #4B5945;
             font-size: 16px;
             position: absolute;
             top: 10px;
@@ -143,8 +153,9 @@ if (isset($_POST['logout'])) {
 
         footer {
             text-align: center;
-            margin-top: 20px;
-            color: #2A3663;
+            margin-top: 50px;
+            font-size: 16px;
+            color: #4B5945;
         }
     </style>
 </head>
@@ -153,66 +164,52 @@ if (isset($_POST['logout'])) {
 <div class="container">
     <h1>Welcome, <?php echo htmlspecialchars($first_name); ?>!</h1>
 
-    <!-- Display the Owner's ID -->
-    <p style="text-align: right;"><strong>Your Owner ID: </strong><?= htmlspecialchars($owner_id) ?></p>
+    <p><strong>Your Owner ID: </strong><?= htmlspecialchars($owner_id) ?></p>
 
-<!-- Display vehicles registered by the owner -->
-<div style="text-align: left; color: #DA8359;">
-    <h3>Your Registered Vehicles:</h3>
+    <div class="vehicle-list">
+        <h3>Your Registered Vehicles:</h3>
 
-<?php if (count($vehicles) > 0): ?>
-    <div style="overflow-x: auto; margin-top: 20px;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left; background-color: #FAF6E3; border: 1px solid #D8DBBD;">
-            <thead>
-                <tr style="background-color: #D8DBBD; color: #2A3663;">
-                    <th style="padding: 10px; border: 1px solid #B59F78;">Plate Number</th>
-                    <th style="padding: 10px; border: 1px solid #B59F78;">Vehicle Type</th>
-                    <th style="padding: 10px; border: 1px solid #B59F78;">Owner Name</th>
-                    <th style="padding: 10px; border: 1px solid #B59F78;">Owner Contact</th>
-                    <th style="padding: 10px; border: 1px solid #B59F78;">Registration Date</th>
-                    <th style="padding: 10px; border: 1px solid #B59F78;">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($vehicles as $vehicle): ?>
-                    <tr style="background-color: #ffffff; color: #2A3663;">
-                        <td style="padding: 10px; border: 1px solid #D8DBBD;"><?php echo htmlspecialchars($vehicle['plate_number']); ?></td>
-                        <td style="padding: 10px; border: 1px solid #D8DBBD;"><?php echo htmlspecialchars($vehicle['vehicle_type']); ?></td>
-                        <td style="padding: 10px; border: 1px solid #D8DBBD;"><?php echo htmlspecialchars($vehicle['owner_name']); ?></td>
-                        <td style="padding: 10px; border: 1px solid #D8DBBD;"><?php echo htmlspecialchars($vehicle['owner_contact']); ?></td>
-                        <td style="padding: 10px; border: 1px solid #D8DBBD;"><?php echo htmlspecialchars($vehicle['registration_date']); ?></td>
-                        <td style="padding: 10px; border: 1px solid #D8DBBD;"><?php echo htmlspecialchars($vehicle['status']); ?></td>
+        <?php if (count($vehicles) > 0): ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Plate Number</th>
+                        <th>Vehicle Type</th>
+                        <th>Owner Name</th>
+                        <th>Owner Contact</th>
+                        <th>Registration Date</th>
+                        <th>Status</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php foreach ($vehicles as $vehicle): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($vehicle['plate_number']); ?></td>
+                            <td><?php echo htmlspecialchars($vehicle['vehicle_type']); ?></td>
+                            <td><?php echo htmlspecialchars($vehicle['owner_name']); ?></td>
+                            <td><?php echo htmlspecialchars($vehicle['owner_contact']); ?></td>
+                            <td><?php echo htmlspecialchars($vehicle['registration_date']); ?></td>
+                            <td><?php echo htmlspecialchars($vehicle['status']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>No vehicles registered.</p>
+        <?php endif; ?>
     </div>
-<?php else: ?>
-    <p style="color: #2A3663; margin-top: 20px;">No vehicles registered.</p>
-<?php endif; ?>
-</div>
 
-
-
-    <!-- Button Container -->
     <div class="button-container">
         <a href="register_vehicle.php" class="button">Register Vehicle</a>
-        <!-- Logout Button -->
         <form method="POST">
             <button type="submit" name="logout" class="button logout-button">Logout</button>
         </form>
     </div>
-
 </div>
 
-<!-- Display current date and time on the right -->
 <div class="date-time">
     <p id="datetime"></p>
 </div>
-
-<footer class="footer">
-    <p>&copy; 2024 Online Vehicle Gate System. All Rights Reserved.</p>
-</footer>
 
 <script>
     function updateTime() {
@@ -225,13 +222,13 @@ if (isset($_POST['logout'])) {
             minute: '2-digit',
             second: '2-digit',
             hour12: true,
-            timeZone: 'Asia/Manila'  // Set timezone to Philippine Time
+            timeZone: 'Asia/Manila'
         });
         document.getElementById('datetime').textContent = now;
     }
 
-    setInterval(updateTime, 1000); // Update time every second
-    updateTime(); // Call function immediately to display initial time
+    setInterval(updateTime, 1000);
+    updateTime();
 </script>
 
 </body>

@@ -153,7 +153,7 @@ $result = mysqli_query($conn, $sql);
                     <th>Plate Number</th>
                     <th>Vehicle Type</th>
                     <th>Owner Name</th>
-                    <th>Owner Contact</th>
+                    <th>Contact Number</th>
                     <th>Actions</th>
                 </tr>
             </thead>
